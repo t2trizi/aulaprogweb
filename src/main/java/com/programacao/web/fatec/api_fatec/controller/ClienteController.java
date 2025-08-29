@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,10 +28,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/clientes")
 public class ClienteController {
     
-    private final List<Cliente> listaDeCliente = new ArrayList<>();
+    private final List<Cliente> listaDeCliente = new ArrayList<>(); 
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ClienteRepository clienteRepository; /*o tipo da classe e o nome dps */
 
     public ClienteController() {
  
@@ -44,7 +45,7 @@ public class ClienteController {
         cliente2.setNome("Joao");
         cliente2.setEndereco("Rua yyyy");
         listaDeCliente.add(cliente2);
-    }
+    }  
 
     @PostConstruct()
     public void dadosIniciais() {
@@ -53,36 +54,38 @@ public class ClienteController {
         clienteRepository.save(new Cliente(null, "Danilo3", "rua xxx"));
     }
 
-    @GetMapping("/listarClientes")
+    @GetMapping("/listarClientes") /* tarefa dia 01/09 */
     public List<Cliente> listarClientes() {
         return clienteRepository.findAll();
     }
     
 
-    @GetMapping("/testeCliente1") //-> /api/clientes/testeCliente1
-    public String testeCliente() {
-        return "Teste Client";
+    @GetMapping("/testeCliente2/{id}") //-> /api/clientes/testeCliente2/ /*tarefa dia 01/09 */
+    public Optional<Cliente> testeCliente2(@PathVariable Long id) {
+        return clienteRepository.findById(id);
     }
 
-    @GetMapping("/testeCliente2/{nome}") //-> /api/clientes/testeCliente2/
-    public String testeCliente2(@PathVariable String nome) {
-        return nome;
-    }
+    /*
+     @PostMapping("/criarcliente") /*tarefa dia 01/09*/
+      public String createCliente(@RequestBody Cliente cliente entity) {
+        for (Cliente cliente: clienteRepository.findAll()) {
+            if (cliente.getId() == id) {
+                return "ID JÁ ENCONTRADO";
+            }
+            else{
+                clienteRepository.save(cliente);
+            }
+        }
 
-    @PostMapping("")
-    public Cliente createCliente(@RequestBody Cliente cliente) {
+        return "CLIENTE INSERIDO";
+} 
 
-        listaDeCliente.add(cliente);
-
-        return cliente;
-    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") /*tarefa dia 01/09 */
     public String deletarCliente(@PathVariable Long id) {
         
-        for (Cliente cliente: listaDeCliente) {
+        for (Cliente cliente: clienteRepository.findAll()) {
                 if (cliente.getId() == id) {
-                    listaDeCliente.remove(cliente);
+                    clienteRepository.delete(cliente);
                     return "OK";
                 }
         }
@@ -93,14 +96,12 @@ public class ClienteController {
     @PutMapping("/{id}")
     public String alterarCliente(@PathVariable Long id, @RequestBody Cliente entity) {
         
-         for (Cliente cliente: listaDeCliente) {
+         for (Cliente cliente: clienteRepository.findAll()) {
                 if (cliente.getId() == id) {
-                    cliente.setId(id);
-                    cliente.setNome(entity.getNome());
-                    return "ENCONTROU";
+                    clienteRepository.save(cliente);
+                    return "CLIENTE ALTERADO";
                 }
         }
-
         return "NÃO ENCONTRADO ID:"+id;    
     }
     
