@@ -65,22 +65,14 @@ public class ClienteController {
         return clienteRepository.findById(id);
     }
 
-    /*
-     @PostMapping("/criarcliente") /*tarefa dia 01/09*/
-      public String createCliente(@RequestBody Cliente cliente entity) {
-        for (Cliente cliente: clienteRepository.findAll()) {
-            if (cliente.getId() == id) {
-                return "ID JÁ ENCONTRADO";
-            }
-            else{
-                clienteRepository.save(cliente);
-            }
-        }
-
+    @PostMapping("/criarcliente") /*tarefa dia 01/09*/
+    public String createCliente(@RequestBody Cliente entity) {
+        clienteRepository.save(entity);
         return "CLIENTE INSERIDO";
-} 
+    }
 
-    @DeleteMapping("/{id}") /*tarefa dia 01/09 */
+
+    @DeleteMapping("/deletar/{id}") /*tarefa dia 01/09 */
     public String deletarCliente(@PathVariable Long id) {
         
         for (Cliente cliente: clienteRepository.findAll()) {
@@ -93,16 +85,14 @@ public class ClienteController {
         return "NÃO ENCONTRADO ID:"+id;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("alterar/{id}")
     public String alterarCliente(@PathVariable Long id, @RequestBody Cliente entity) {
-        
-         for (Cliente cliente: clienteRepository.findAll()) {
-                if (cliente.getId() == id) {
-                    clienteRepository.save(cliente);
-                    return "CLIENTE ALTERADO";
-                }
-        }
-        return "NÃO ENCONTRADO ID:"+id;    
+    if (clienteRepository.existsById(id)) {
+        entity.setId(id);
+        clienteRepository.save(entity);
+        return "CLIENTE ALTERADO";
     }
-    
+    return "NÃO ENCONTRADO ID: " + id;
+}
+
 }
